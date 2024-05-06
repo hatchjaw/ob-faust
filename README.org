@@ -18,3 +18,7 @@ For syntax highlighting etc. install =faust-mode= and/or
 #+begin_src emacs-lisp :results silent
 (defconst faust-regexp-faust-delimiters (rx (any "{}()[];")))
 #+end_src
+
+This is because the =font-lock= face specified for delimiters,
+formerly marked as obsolete, is, as of (approx.) Emacs 29.0, [[https://github.com/emacs-mirror/emacs/commit/107f832577123ea7ebe867cba55601d0142f546f][no longer
+available.]]
