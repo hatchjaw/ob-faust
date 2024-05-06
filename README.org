@@ -3,11 +3,11 @@
 
 Example usage:
 
-#+begin_example
-#+begin_src faust :results html :exports both
+#+begin_src org
+,#+begin_src faust :results html :exports both
 process = +;
+,#+end_src
 #+end_src
-#+end_example
 
 Results support limited to HTML and =faust-web-component=.
 
