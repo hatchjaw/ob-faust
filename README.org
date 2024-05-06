@@ -1,0 +1,20 @@
+#+title: Faust support for Org-Babel
+#+author: Thomas Rushton
+
+Example usage:
+
+#+begin_example
+#+begin_src faust :results html :exports both
+process = +;
+#+end_src
+#+end_example
+
+Results support limited to HTML and =faust-web-component=.
+
+For syntax highlighting etc. install =faust-mode= and/or
+=faustine=. Note, however, that highlighting breaks on inserting any
+/delimiter/, as identified by the following from =faust-mode.el=:
+
+#+begin_src emacs-lisp :results silent
+(defconst faust-regexp-faust-delimiters (rx (any "{}()[];")))
+#+end_src
