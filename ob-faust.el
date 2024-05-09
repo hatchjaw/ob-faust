@@ -166,7 +166,9 @@ This function is called by `org-babel-execute-src-block'"
     (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
 			       (format " sizes=\"[%s]\"" sizes))
 			     (when-let ((tab (cdr (assoc :tab processed-params))))
-			       (format " tab=%S" tab))))
+			       (format " tab=%S" tab))
+			     (when-let ((class (cdr (assoc :class processed-params))))
+			       (format " class=%S" class))))
 				 
     (setq results (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
       results))
