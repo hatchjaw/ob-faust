@@ -163,15 +163,16 @@ This function is called by `org-babel-execute-src-block'"
 
     ;; For now, just build a HTML <faust-editor> block to use with
     ;; faust-web-component.
-    (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
-			       (format " sizes=\"[%s]\"" sizes))
-			     (when-let ((tab (cdr (assoc :tab processed-params))))
-			       (format " tab=%S" tab))
-			     (when-let ((class (cdr (assoc :class processed-params))))
-			       (format " class=%S" class))))
-				 
-    (setq results (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
-      results))
+    (when (member "html" result-params)
+      (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
+				 (format " sizes=\"[%s]\"" sizes))
+			       (when-let ((tab (cdr (assoc :tab processed-params))))
+				 (format " tab=%S" tab))
+			       (when-let ((class (cdr (assoc :class processed-params))))
+				 (format " class=%S" class))))
+      
+      (setq results (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
+      results)))
 
 ;; This function should be used to assign any variables in params in
 ;; the context of the session environment.
