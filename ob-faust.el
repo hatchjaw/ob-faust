@@ -124,7 +124,7 @@
 (defun org-babel-execute:faust (body params)
   "Execute a block of Faust code with org-babel.
 This function is called by `org-babel-execute-src-block'"
-  (message "executing Faust source code block")
+  (message "Executing Faust source code block")
   (let* ((processed-params (org-babel-process-params params))
          ;; set the session if the value of the session keyword is not the
          ;; string `none'
@@ -138,7 +138,8 @@ This function is called by `org-babel-execute-src-block'"
          (result-type (assq :result-type processed-params))
          ;; expand the body with `org-babel-expand-body:faust'
          (full-body (org-babel-expand-body:faust
-                     body params processed-params)))
+                     body params processed-params))
+	 (results (org-babel-faust-evaluate full-body result-type result-params processed-params)))
     ;; actually execute the source-code block either in a session or
     ;; possibly by dropping it to a temporary file and evaluating the
     ;; file.
@@ -160,19 +161,9 @@ This function is called by `org-babel-execute-src-block'"
     ;; (message (format "session=%S" session))
     ;; (message (format "result-params=%S" result-params))
     ;; (message (format "params=%S" processed-params))
+    ;; (message (format "results=%s" results))
 
-    ;; For now, just build a HTML <faust-editor> block to use with
-    ;; faust-web-component.
-    (when (member "html" result-params)
-      (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
-				 (format " sizes=\"[%s]\"" sizes))
-			       (when-let ((tab (cdr (assoc :tab processed-params))))
-				 (format " tab=%S" tab))
-			       (when-let ((class (cdr (assoc :class processed-params))))
-				 (format " class=%S" class))))
-      
-      (setq results (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
-      results)))
+    results))
 
 ;; This function should be used to assign any variables in params in
 ;; the context of the session environment.
@@ -195,6 +186,31 @@ Emacs-lisp table, otherwise return the results as a string."
 Return the initialized session."
   (unless (string= session "none")
     ))
+
+(defun org-babel-faust-evaluate (body &optional result-type result-params processed-params)
+  "..."
+  (cond ((member "html" result-params)
+	 (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
+				    (format " sizes=\"[%s]\"" sizes))
+				  (when-let ((tab (cdr (assoc :tab processed-params))))
+				    (format " tab=%S" tab))
+				  (when-let ((class (cdr (assoc :class processed-params))))
+				    (format " class=%S" class))))
+	 (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
+	
+	((member "svg" result-params)
+	 (let* ((faust-temp "faust-temp")
+	        (svg-dir (format "./%s-svg" faust-temp))
+	        (dsp-file (format "./%s.dsp" faust-temp))
+		(generated-file (format "%s/process.svg" svg-dir))
+		(out-file (cdr (assoc :file processed-params)))
+		)
+	   (with-temp-file dsp-file (insert body))
+	   (shell-command-to-string (format "faust -svg %s" dsp-file))
+	   (rename-file generated-file out-file t)
+	   (delete-file dsp-file)
+	   (delete-directory svg-dir t)
+	   nil))))
 
 (provide 'ob-faust)
 ;;; ob-faust.el ends here
