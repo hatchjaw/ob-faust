@@ -1,6 +1,8 @@
 #+title: Faust support for Org-Babel
 #+author: Thomas Rushton
 
+Offers support for =faust-web-component= and SVG export.
+
 Example usage:
 
 #+begin_src org
@@ -9,7 +11,13 @@ process = +;
 ,#+end_src
 #+end_src
 
-Results support limited to HTML and =faust-web-component=.
+#+begin_src org
+,#+begin_src faust :results file svg :file process.svg :exports both
+process = +;
+,#+end_src
+#+end_src
+
+** Note: Syntax Highlighting
 
 For syntax highlighting etc. install =faust-mode= and/or
 =faustine=. Note, however, that highlighting breaks on inserting any

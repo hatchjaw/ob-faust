@@ -157,11 +157,11 @@ This function is called by `org-babel-execute-src-block'"
 
     ;; ;;; debugging statements
     ;; (message (format "result-type=%S" result-type))
-    ;; (message (format "body=%S" full-body))
+    ;; (message (format "body=%S" (string-replace "%" "%%" full-body)))
     ;; (message (format "session=%S" session))
     ;; (message (format "result-params=%S" result-params))
     ;; (message (format "params=%S" processed-params))
-    ;; (message (format "results=%s" results))
+    ;; (message (format "results=%S" (string-replace "%" "%%" results)))
 
     results))
 
@@ -188,7 +188,11 @@ Return the initialized session."
     ))
 
 (defun org-babel-faust-evaluate (body &optional result-type result-params processed-params)
-  "..."
+  "Evaluate Faust code, check results-params for the desired output
+type and proceed accordingly. For `html` generate and return a
+`<faust-editor>` HTML element; for `svg` run the Faust compiler,
+with the `-svg` flag, and copy the resulting file process.svg to the
+specified output location."
   (cond ((member "html" result-params)
 	 (setq attributes (concat (when-let ((sizes (cdr (assoc :sizes processed-params))))
 				    (format " sizes=\"[%s]\"" sizes))
@@ -205,11 +209,17 @@ Return the initialized session."
 		(generated-file (format "%s/process.svg" svg-dir))
 		(out-file (cdr (assoc :file processed-params)))
 		)
+	   ;; Put the code in a temp file.
 	   (with-temp-file dsp-file (insert body))
+	   ;; Run `faust -svg` on the temp file.
 	   (shell-command-to-string (format "faust -svg %s" dsp-file))
+	   ;; Move process.svg to the desired output location.
 	   (rename-file generated-file out-file t)
+	   ;; Tidy up.
 	   (delete-file dsp-file)
 	   (delete-directory svg-dir t)
+	   ;; Prevent the file's contents being replaced with the
+	   ;; return value of this function.
 	   nil))))
 
 (provide 'ob-faust)
