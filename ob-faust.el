@@ -198,9 +198,11 @@ specified output location."
 				    (format " sizes=\"[%s]\"" sizes))
 				  (when-let ((tab (cdr (assoc :tab processed-params))))
 				    (format " tab=%S" tab))
-				  (when-let ((class (cdr (assoc :class processed-params))))
+                                  (when-let ((line-numbers (cdr (assoc :line-numbers processed-params))))
+                                    (format " lineNumbers=%S" line-numbers))
+                                  (when-let ((class (cdr (assoc :class processed-params))))
 				    (format " class=%S" class))))
-	 (format "<faust-editor%s>\n<!--%s-->\n</faust-editor>" attributes full-body))
+	 (format "<div class=\"faust-editor-wrap\">\n<faust-editor%s>\n<!--%s-->\n</faust-editor>\n</div>" attributes full-body))
 	
 	((member "svg" result-params)
 	 (let* ((faust-temp "faust-temp")
