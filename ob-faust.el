@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;; ob-faust.el --- org-babel functions for evaluation of Faust code
 
 ;; Copyright (C) Thomas Rusthon
